@@ -2,22 +2,57 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <title>Bir Özür Mesajı</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Özür Dilerim</title>
+  <style>
+    body {
+      background-color: #fffafc;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .message {
+      font-size: 20px;
+      color: #333;
+      margin-top: 100px;
+    }
+
+    #surpriseImage {
+      display: none;
+      margin-top: 40px;
+      width: 300px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+  </style>
 </head>
 <body>
+
+  <h1>🌸 Özür Dilerim 🌸</h1>
+
   <div class="message">
-    <h2>Özür Dilerim</h2>
-    <p>
-      Söylediğim şey için gerçekten çok üzgünüm, fazla sinirlendim kabul ediyorum, gerçekten özür dilerim. <br><br>
-      Sürekli yanında olabilmek istiyorum her daim, her anında. <br><br>
-      Keşke bu tartışmalarımız hiç yaşanmasa ben seninle sürekli mutlu kalmak istiyorum. <br><br>
-      <strong>Seni çok seviyorum</strong> ❤️
-    </p>
+    Söylediğim şey için gerçekten çok üzgünüm, fazla sinirlendim kabul ediyorum, gerçekten özür dilerim. 
+    Sürekli yanında olabilmek istiyorum her daim, her anında. Keşke bu tartışmalarımız hiç yaşanmasa, ben 
+    seninle sürekli mutlu kalmak istiyorum. Seni çok seviyorum 💖
   </div>
 
-  <img src="ozurfoto.png" alt="Sürpriz Fotoğraf" class="surprise-image" id="surpriseImage">
+  <img src="ozurfoto.png" id="surpriseImage" alt="Sürpriz Fotoğraf">
 
-  <script src="script.js"></script>
+  <script>
+    let threshold = 20;
+    let lastShakeTime = 0;
+
+    window.addEventListener('devicemotion', function(event) {
+      const acc = event.accelerationIncludingGravity;
+      const total = Math.abs(acc.x) + Math.abs(acc.y) + Math.abs(acc.z);
+
+      const now = Date.now();
+      if (total > threshold && now - lastShakeTime > 1000) {
+        document.getElementById('surpriseImage').style.display = 'block';
+        lastShakeTime = now;
+      }
+    });
+  </script>
+
 </body>
 </html>
