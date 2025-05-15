@@ -5,54 +5,90 @@
   <title>Özür Dilerim</title>
   <style>
     body {
-      background-color: #fffafc;
-      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #fff0f5;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      position: relative;
+      width: 90%;
+      max-width: 400px;
       text-align: center;
-      padding: 20px;
     }
 
     .message {
-      font-size: 20px;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      font-size: 16px;
       color: #333;
-      margin-top: 100px;
     }
 
-    #surpriseImage {
+    .photo {
+      margin-top: 20px;
       display: none;
-      margin-top: 40px;
-      width: 300px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .photo img {
+      width: 100%;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <div class="message">
+      Söylediğim şey için gerçekten çok üzgünüm, fazla sinirlendim kabul ediyorum, gerçekten özür dilerim. Sürekli yanında olabilmek istiyorum her daim, her anında. Keşke bu tartışmalarımız hiç yaşanmasa, ben seninle sürekli mutlu kalmak istiyorum. Seni çok seviyorum.
+      <br><br><strong>Lütfen mikrofona üfle <3 💨</strong>
+    </div>
 
-  <h1>🌸 Özür Dilerim 🌸</h1>
-
-  <div class="message">
-    Söylediğim şey için gerçekten çok üzgünüm, fazla sinirlendim kabul ediyorum, gerçekten özür dilerim. 
-    Sürekli yanında olabilmek istiyorum her daim, her anında. Keşke bu tartışmalarımız hiç yaşanmasa, ben 
-    seninle sürekli mutlu kalmak istiyorum. Seni çok seviyorum 💖
+    <div class="photo" id="photo">
+      <img src="images/ozurfoto.png" alt="Özür Fotoğrafı">
+    </div>
   </div>
 
-  <img src="images/ozurfoto.png" id="surpriseImage" alt="Sürpriz Fotoğraf">
-
   <script>
-    let threshold = 20;
-    let lastShakeTime = 0;
+    let photo = document.getElementById("photo");
 
-    window.addEventListener('devicemotion', function(event) {
-      const acc = event.accelerationIncludingGravity;
-      const total = Math.abs(acc.x) + Math.abs(acc.y) + Math.abs(acc.z);
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const source = audioContext.createMediaStreamSource(stream);
+      const analyser = audioContext.createAnalyser();
+      analyser.fftSize = 512;
+      source.connect(analyser);
 
-      const now = Date.now();
-      if (total > threshold && now - lastShakeTime > 1000) {
-        document.getElementById('surpriseImage').style.display = 'block';
-        lastShakeTime = now;
+      const dataArray = new Uint8Array(analyser.frequencyBinCount);
+      let blowCounter = 0;
+
+      function detectBlow() {
+        analyser.getByteFrequencyData(dataArray);
+        const volume = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
+
+        if (volume > 50) {
+          blowCounter++;
+        } else {
+          blowCounter = 0;
+        }
+
+        if (blowCounter > 5) {
+          photo.style.display = 'block';
+        }
+
+        requestAnimationFrame(detectBlow);
       }
+
+      detectBlow();
+    }).catch(err => {
+      console.error('Mikrofon erişimi reddedildi:', err);
     });
   </script>
-
 </body>
 </html>
